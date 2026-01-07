@@ -25,7 +25,7 @@ while True:
     elif opcao == "2": 
         try: 
             valor = float(input('Digite o valor que deseja depositar: R$ '))
-            conta_dani.depositar(valor) # Chamada corrigida aqui!
+            conta_dani.depositar(valor)
         except ValueError: 
             print('Erro: Por favor digite apenas números.')
 
