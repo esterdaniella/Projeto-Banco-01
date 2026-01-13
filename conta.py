@@ -6,43 +6,44 @@ class Conta:
         self.saldo = saldo_inicial
         self.limite = limite
 
-    def senha_correta(self):
-        """Método auxiliar para validar a senha em qualquer operação."""
-        senha_digitada = input('Por favor, digite sua senha: ')
-        if senha_digitada == self.senha: 
-            return True
-        else: 
-            print("Senha incorreta! Acesso negado.")
-            return False
+    def senha_correta(self, senha_digitada):
+        #"""Agora recebe a senha por parâmetro e apenas retorna True ou False."""
+        return senha_digitada == self.senha
 
     def depositar(self, valor):
+        #"""Retorna uma string com o resultado para o Bot exibir."""
         if valor > 0:
             self.saldo += valor
-            print(f'Depósito de R$ {valor:.2f} realizado com sucesso! Novo saldo: R$ {self.saldo:.2f}.')
+            return f'✅ Depósito de R$ {valor:.2f} realizado! Novo saldo: R$ {self.saldo:.2f}.'
+        return '❌ Erro: O valor do depósito deve ser positivo.'
+
+    def sacar(self, valor, senha_fornecida):
+        #"""Lógica de saque usando parâmetros e retornos de texto."""
+        if not self.senha_correta(senha_fornecida):
+            return "⚠️ Senha incorreta! Acesso negado."
+
+        saldo_disponivel = self.saldo + self.limite 
+        if saldo_disponivel >= valor: 
+            self.saldo -= valor
+            return f'✅ Saque de R$ {valor:.2f} realizado! Saldo atual: R$ {self.saldo:.2f}.'
         else: 
-            print('O valor do depósito deve ser positivo.')
+            return f'❌ Saldo insuficiente. Disponível: R$ {saldo_disponivel:.2f}.'
 
-    def sacar(self, valor):
-        # Agora usamos o validador que você criou!
-        if self.senha_correta():
-            saldo_disponivel = self.saldo + self.limite 
-
-            if saldo_disponivel >= valor: 
-                self.saldo -= valor
-                print(f'Saque de R$ {valor:.2f} realizado! Saldo atual: R$ {self.saldo:.2f}.')
-                return True
-            else: 
-                print(f'SALDO INSUFICIENTE. Disponível: R$ {saldo_disponivel:.2f}.')
-                return False
-        return False 
-
-    def exibir_saldo(self):
-        # Protegendo o extrato com senha também
-        if self.senha_correta():
-            print("\n" + "="*30)
-            print(f"EXTRATO BANCÁRIO")
-            print(f"Titular: {self.titular}")
-            print(f"Saldo em Conta: R$ {self.saldo:.2f}")
-            print(f"Limite de Crédito: R$ {self.limite:.2f}")
-            print(f"Total Disponível: R$ {(self.saldo + self.limite):.2f}")
-            print("="*30)
+    def exibir_saldo(self, senha_fornecida):
+        #"""Retorna o saldo formatado se a senha estiver correta."""
+        if not self.senha_correta(senha_fornecida):
+            return "⚠️ Senha incorreta! Acesso negado."
+            
+        extrato = (
+            f"```\n"
+            f"{'='*20}\n"
+            f" EXTRATO BANCÁRIO\n"
+            f"{'='*20}\n"
+            f"Titular: {self.titular}\n"
+            f"Saldo: R$ {self.saldo:.2f}\n"
+            f"Limite: R$ {self.limite:.2f}\n"
+            f"Total: R$ {(self.saldo + self.limite):.2f}\n"
+            f"{'='*20}\n"
+            f"```"
+        )
+        return extrato
